@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 $("#submitForm").click(function(){
       var firstName = $("input#thisIsTheName").val();
-      document.getElementById('thisIsResultOutput').innerHTML = (firstName + "! I am so incredibly greatful for your encouragement and support during the last 10 weeks I've been taking a Intro to Programming class. I had a ton of fun during this course and could not have been able to do it without your support.");
+      document.getElementById('thisIsResultOutput').innerHTML = (firstName + "! I am so incredibly grateful for your encouragement and support during the last 10 weeks I've been taking a Intro to Programming class. I had a ton of fun during this course and could not have been able to do it without your support.");
       $("#hideAfterClick").hide();
       $("#thisIsResultOutput").show();
       event.preventDefault();
