@@ -4,7 +4,8 @@ $(document).ready(function() {
 
 $("#submitForm").click(function(){
       var firstName = $("input#thisIsTheName").val();
-      document.getElementById('thisIsResultOutput').innerHTML = (firstName + "! I am so incredibly greatful for your encouragement and support for the last 10 weeks I've been taking a Intro to Programming class. I had a ton of fun during this course and could not have been able to do it without your support.");
+      document.getElementById('thisIsResultOutput').innerHTML = (firstName + "! I am so incredibly greatful for your encouragement and support during the last 10 weeks I've been taking a Intro to Programming class. I had a ton of fun during this course and could not have been able to do it without your support.");
+      $("#hideAfterClick").hide();
       $("#thisIsResultOutput").show();
       event.preventDefault();
 
@@ -17,102 +18,67 @@ $("#submitForm").click(function(){
 
 
 
-var no = 12; // number of hearts
-var speed = 10; // smaller number moves the hearts faster
-var heart = "heart.gif";
-var flag;
-//var ns4up = (document.layers) ? 1 : 0;   browser sniffer
+ var HeartsBackground = {
+   heartHeight: 60,
+   heartWidth: 64,
+   hearts: [],
+   heartImage: 'heart.png',
+   maxHearts: 8,
+   minScale: 0.4,
+   draw: function() {
+     this.setCanvasSize();
+     this.ctx.clearRect(0, 0, this.w, this.h);
+     for (var i = 0; i < this.hearts.length; i++) {
+       var heart = this.hearts[i];
+       heart.image = new Image();
+       heart.image.style.height = heart.height;
+       heart.image.src = this.heartImage;
+       this.ctx.globalAlpha = heart.opacity;
+       this.ctx.drawImage (heart.image, heart.x, heart.y, heart.width, heart.height);
+     }
+     this.move();
+   },
+   move: function() {
+     for(var b = 0; b < this.hearts.length; b++) {
+       var heart = this.hearts[b];
+       heart.y += heart.ys;
+       if(heart.y > this.h) {
+         heart.x = Math.random() * this.w;
+         heart.y = -1 * this.heartHeight;
+       }
+     }
+   },
+   setCanvasSize: function() {
+     this.canvas.width = window.innerWidth;
+     this.canvas.height = window.innerHeight;
+     this.w = this.canvas.width;
+     this.h = this.canvas.height;
+   },
+   initialize: function() {
+     this.canvas = $('#canvas')[0];
 
-if (document.all)
-{
-var ie4up=true;
-}
-else
-{
-var ns4up=true;
-}
+     if(!this.canvas.getContext)
+       return;
 
-var dx, xp, yp;    // coordinate and position variables
-var am, stx, sty;  // amplitude and step variables
-var i, doc_width = 800, doc_height = 600;
-if (ns4up) {
-doc_width = self.innerWidth;
-//alert(self.innerWidth)
-doc_height = self.innerHeight;
-} else if (ie4up) {
-doc_width = document.body.clientWidth;
-doc_height = document.body.clientHeight;
-}
-dx = new Array();
-xp = new Array();
-yp = new Array();
-amx = new Array();
-amy = new Array();
-stx = new Array();
-sty = new Array();
-flag = new Array();
-for (i = 0; i < no; ++ i) {
-dx[i] = 0;                        // set coordinate variables
-xp[i] = Math.random()*(doc_width-30)+10;  // set position variables
-yp[i] = Math.random()*doc_height;
-amy[i] = 12+ Math.random()*20;         // set amplitude variables
-amx[i] = 10+ Math.random()*40;
-stx[i] = 0.02 + Math.random()/10; // set step variables
-sty[i] = 0.7 + Math.random();     // set step variables
-flag[i] = (Math.random()>0.5)?1:0;
+     this.setCanvasSize();
+     this.ctx = this.canvas.getContext('2d');
 
+     for(var a = 0; a < this.maxHearts; a++) {
+       var scale = (Math.random() * (1 - this.minScale)) + this.minScale;
+       this.hearts.push({
+         x: Math.random() * this.w,
+         y: Math.random() * this.h,
+         ys: Math.random() + 1,
+         height: scale * this.heartHeight,
+         width: scale * this.heartWidth,
+         opacity: scale
+       });
+     }
 
-if (i == 0) {
-document.write("<div id=\"dot"+ i +"\" style=\"POSITION: ");
-document.write("absolute; Z-INDEX: "+ i +"; VISIBILITY: ");
-document.write("visible; TOP: 15px; LEFT: 15px;\"><img src=\"");
-document.write(heart+ "\" border=\"0\"></div>");
-} else {
-document.write("<div id=\"dot"+ i +"\" style=\"POSITION: ");
-document.write("absolute; Z-INDEX: "+ i +"; VISIBILITY: ");
-document.write("visible; TOP: 15px; LEFT: 15px;\"><img src=\"");
-document.write(heart+ "\" border=\"0\"></div>");
-}
+     setInterval($.proxy(this.draw, this), 30);
+   }
+ };
 
-}
-
-
-
-function snowIE() {  // IE main animation function
-var DotStyle;
-for (i = 0; i < no; ++ i) {  // iterate for every dot
-if (yp[i] > doc_height-50) {
-xp[i] = 10+ Math.random()*(doc_width-amx[i]-30);
-yp[i] = 0;
-stx[i] = 0.02 + Math.random()/10;
-sty[i] = 0.7 + Math.random();
-flag[i]=(Math.random()<0.5)?1:0;
-
-}
-if (flag[i])
-dx[i] += stx[i];
-else
-dx[i] -= stx[i];
-if (Math.abs(dx[i]) > Math.PI) {
-yp[i]+=Math.abs(amy[i]*dx[i]);
-xp[i]+=amx[i]*dx[i];
-dx[i]=0;
-flag[i]=!flag[i];
-}
-DotStyle=document.getElementById("dot"+i).style;
-if (ie4up)
-{
-DotStyle.pixelTop=yp[i] + amy[i]*(Math.abs(Math.sin(dx[i])+dx[i]));
-DotStyle.pixelLeft=xp[i] + amx[i]*dx[i];
-}
-else
-{
-DotStyle.top=yp[i] + amy[i]*(Math.abs(Math.sin(dx[i])+dx[i]));
-DotStyle.left=xp[i] + amx[i]*dx[i];
-}
-}
-setTimeout("snowIE()", speed);
-}
-
-
-snowIE();
+ $(document).ready(function(){
+   HeartsBackground.initialize();
+ });
